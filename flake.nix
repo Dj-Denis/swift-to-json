@@ -1,17 +1,15 @@
 {
-  description = "Swift MT CLI App built with Gradle and GraalVM via Nix flake";
+  description = "CLI app to convert Swift MT messages into json";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
-    gradle2nix.url = "github:tadfisher/gradle2nix";
   };
 
   outputs = {
     self,
     nixpkgs,
     flake-utils,
-    gradle2nix,
   }:
     flake-utils.lib.eachDefaultSystem (
       system: let
@@ -24,17 +22,12 @@
             pkgs.maven
             graal
           ];
-
-          shellHook = ''
-            echo "Dev shell ready: Maven + GraalVM"
-          '';
         };
 
         packages.default = pkgs.maven.buildMavenPackage {
           pname = "swift-to-json";
           version = "1.0.0";
 
-          # Include full source tree
           src = ./.;
           mvnJdk = graal;
           mvnHash = "sha256-v9plzBxmYTSEFcIf1CNsayxxEjnivVLVlH36BXNgGvw=";
