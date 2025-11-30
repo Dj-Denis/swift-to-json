@@ -5,6 +5,8 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -15,8 +17,13 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import com.prowidesoftware.swift.model.mt.AbstractMT;
+import com.prowidesoftware.swift.model.mt.AbstractMTAdapter;
+import com.prowidesoftware.swift.model.SwiftBlock2;
+import com.prowidesoftware.swift.model.SwiftBlock2Adapter;
 
 public class SwiftToJson {
+    private static Gson gson = (new GsonBuilder()).registerTypeAdapter(AbstractMT.class, new AbstractMTAdapter())
+            .registerTypeAdapter(SwiftBlock2.class, new SwiftBlock2Adapter()).create();
 
     public static void main(String[] args) throws Exception {
         if (args.length == 0) {
@@ -128,7 +135,7 @@ public class SwiftToJson {
                 if (!first)
                     writer.write(",\n");
                 first = false;
-                writer.write(msg.toJson());
+                writer.write(gson.toJson(msg, AbstractMT.class));
             }
 
             writer.write("\n]");
